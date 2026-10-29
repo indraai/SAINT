@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pysaint"
+version = "0.0.1"
+description = "Modern SAINT (Systems Analysis of Integrated Networks of Tasks)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = [
+  "numpy", "scipy", "pandas", "pyarrow", "pydantic>=2", "matplotlib",
+  "ruamel.yaml", "typer", "rich", "networkx",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "hypothesis", "ruff", "mypy"]
+
+[project.scripts]
+saint = "pysaint.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["pysaint"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["pysaint/model", "pysaint/kernel", "pysaint/continuous"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
