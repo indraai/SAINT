@@ -1,4 +1,4 @@
-"""Command line: ``saint validate MODEL`` and ``saint run MODEL`` (spec §3.2).
+"""Command line: ``saint validate MODEL``, ``saint run MODEL``, ``saint serve`` (spec §3.2).
 
 ``convert``, ``graph`` and ``schema`` arrive with later phases.
 """
@@ -61,6 +61,23 @@ def run(
     if csv is not None:
         for f in res.export_csv(str(csv)):
             typer.echo(f"wrote {f}")
+
+
+@app.command()
+def serve(
+    host: str = typer.Option("127.0.0.1", help="Interface to bind (0.0.0.0 = all)."),
+    port: int = typer.Option(8000, help="TCP port."),
+    reload: bool = typer.Option(False, help="Auto-reload on code changes (development)."),
+) -> None:
+    """Start the web API and browser UI (needs the 'web' extra installed)."""
+    try:
+        import uvicorn
+    except ImportError:
+        typer.echo("error: the web extra is not installed; run: pip install -e '.[web]'",
+                   err=True)
+        raise typer.Exit(2)
+    typer.echo(f"pySAINT UI: http://{host}:{port}/   API docs: http://{host}:{port}/docs")
+    uvicorn.run("pysaint.api:create_app", factory=True, host=host, port=port, reload=reload)
 
 
 def main() -> None:
