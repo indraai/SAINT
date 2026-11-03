@@ -12,10 +12,13 @@ command line, web API and browser UI. See [docs/index.md](docs/index.md).
 ```bash
 git clone https://github.com/indraai/SAINT.git && cd SAINT
 python3 -m venv .venv && source .venv/bin/activate      # Windows: py -m venv .venv; .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install -e '.[web,dev]'
 saint run examples/yaml/inspection_network.yaml -n 100 -s 1
 saint serve        # then open http://127.0.0.1:8000/
 ```
+
+Requires Python 3.11+. **macOS:** the built-in Python is 3.9 and will fail with a `setup.py`/`setup.cfg not found` error; install `python@3.12` (Homebrew or python.org) and create the venv with `python3.12 -m venv .venv`. See [docs/getting-started.md](docs/getting-started.md).
 
 ## Documentation
 

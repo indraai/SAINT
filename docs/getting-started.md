@@ -15,6 +15,23 @@ py --version             # Windows
 
 If it prints `Python 3.11` or higher, skip ahead. Otherwise:
 
+> **macOS users: the built-in Python is too old.** The Python that ships with macOS /
+> Xcode Command Line Tools is 3.9.x, and SAINT needs **3.11+**. If your venv was made
+> with it, `pip install -e` fails with
+> `File "setup.py" or "setup.cfg" not found ... editable mode currently requires a setuptools-based build`
+> (usually alongside an old pip 21.x). Fix it by installing a newer Python and rebuilding the venv:
+>
+> ```bash
+> brew install python@3.12        # or use the installer from https://www.python.org/downloads/
+> deactivate                      # if a venv is active
+> rm -rf .venv
+> python3.12 -m venv .venv
+> source .venv/bin/activate
+> python --version                # must show 3.11 or higher
+> python -m pip install --upgrade pip
+> pip install -e '.[web,dev]'
+> ```
+
 - **macOS**: install from <https://www.python.org/downloads/> (or `brew install python@3.12`).
 - **Linux (Debian/Ubuntu)**: `sudo apt install python3 python3-venv python3-pip`.
 - **Windows**: install from <https://www.python.org/downloads/> and tick
@@ -57,7 +74,10 @@ you open a new terminal.
 
 ## 4. Install pySAINT
 
+First upgrade pip (old pip versions cannot do editable installs of this project):
+
 ```bash
+python -m pip install --upgrade pip
 pip install -e '.[web,dev]'
 ```
 
@@ -160,6 +180,7 @@ result.export_csv("out")
 | `error: the web extra is not installed` | `pip install -e '.[web]'` |
 | `address already in use` | Another program uses port 8000: `saint serve --port 8001`. |
 | `requires-python >=3.11` during install | Your venv uses an old Python; recreate it with Python 3.11+. |
+| `File "setup.py" or "setup.cfg" not found ... editable mode currently requires a setuptools-based build` | Old pip and/or Python (e.g. macOS built-in 3.9). Check `python --version`; if below 3.11, recreate the venv with Python 3.12 (see the macOS note in step 1), then `python -m pip install --upgrade pip` and reinstall. |
 | Examples list in the UI is empty | Use the editable install (`pip install -e`) from the repo, or set `SAINT_EXAMPLES=/path/to/examples/yaml` before `saint serve`. |
 
 Next: write your own model with [model-format.md](model-format.md).
