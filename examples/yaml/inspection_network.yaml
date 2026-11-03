@@ -1,0 +1,28 @@
+# Serial/parallel task network with a probabilistic rework branch.
+# RECEIVE -> (CHECK_A || CHECK_B) -> INSPECT -> PRO {0.8 SHIP (sink), 0.2 REWORK -> INSPECT}
+saint: "1.0"
+general: {name: INSPECTION, iterations: 500, sinks_to_complete: 1, seed: 71268659}
+distributions:
+  1: {type: NO, mean: 4.0, sd: 1.0, min: 1.0, max: 8.0}
+  2: {type: TR, mode: 3.0, min: 2.0, max: 6.0}
+  3: {type: UN, min: 1.0, max: 3.0}
+resources:
+  1: {label: INSPECTR}
+tasks:
+  1: {label: RECEIVE, role: source, time: {SC: 1.0},
+      branching: {type: DET, successors: [2, 3]}, mark: {at: STA}}
+  2: {label: CHECK_A, time: {DS: 1}, branching: {type: DET, successors: [4]}}
+  3: {label: CHECK_B, time: {DS: 2}, branching: {type: DET, successors: [4]}}
+  4:
+    label: INSPECT
+    pr1: 2          # both checks must complete first
+    pr2: 1          # each rework completion re-releases it
+    time: {DS: 3}
+    resources: {mode: AND, ids: [1]}
+    stat: {type: NUM, at: COM}
+    branching:
+      type: PRO
+      branches: [{to: 6, p: 0.8}, {to: 5, p: 0.2}]
+  5: {label: REWORK, pr2: 1, time: {dist: {type: EX, mean: 2.0}},
+      branching: {type: DET, successors: [4]}}
+  6: {label: SHIP, role: sink, time: {SC: 0}, stat: {type: INT, at: COM}}

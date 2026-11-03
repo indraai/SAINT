@@ -1,0 +1,31 @@
+# Resource-contended model: tasks arrive (exponential, mean 1.25 => rate 0.8)
+# and are served by one of two operators (RESR OR), exponential service mean 2.0.
+# M/M/2 with rho = lambda/(2 mu) = 0.8. Run ends after 2000 served tasks.
+saint: "1.0"
+general: {name: TWO_OPERATORS, iterations: 10, sinks_to_complete: 2000, seed: 12345}
+distributions:
+  1: {type: EX, mean: 1.25}
+  2: {type: EX, mean: 2.0}
+resources:
+  1: {label: OPER1}
+  2: {label: OPER2}
+tasks:
+  1:
+    label: ARRIVE
+    role: source
+    pr2: 1
+    time: {DS: 1}
+    branching: {type: DET, successors: [1, 2]}   # loop: next arrival + request service
+  2:
+    label: SERVE
+    pr2: 1
+    time: {DS: 2}
+    resources: {mode: OR, ids: [1, 2]}
+    mark: {at: REL}
+    branching: {type: DET, successors: [3]}
+  3:
+    label: DONE
+    role: sink
+    pr2: 1
+    time: {SC: 0}
+    stat: {type: INT, at: COM}                    # time in system (since SERVE release)
