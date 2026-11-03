@@ -15,19 +15,22 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "hypothesis", "ruff", "mypy"]
+web = ["fastapi>=0.110", "uvicorn>=0.27"]
+dev = ["pytest", "hypothesis", "ruff", "mypy", "httpx", "fastapi>=0.110", "uvicorn>=0.27"]
 
 [project.scripts]
 saint = "pysaint.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["pysaint"]
+artifacts = ["pysaint/api/static/*"]
 
 [tool.ruff]
 line-length = 100
 
 [tool.ruff.lint.per-file-ignores]
 "pysaint/cli.py" = ["B008"]  # typer idiom
+"pysaint/api/app.py" = ["B008"]
 
 [tool.mypy]
 python_version = "3.11"

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pySAINT</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>pySAINT</h1>
+  <span class="sub">Systems Analysis of Integrated Networks of Tasks</span>
+  <span id="version" class="sub right"></span>
+</header>
+<main>
+  <section class="panel" id="input">
+    <h2>1. Model</h2>
+    <div class="row">
+      <label>Example <select id="example"><option value="">(choose)</option></select></label>
+      <label class="file">Upload <input type="file" id="upload" accept=".yaml,.yml,.json"></label>
+      <label>Format <select id="format"><option>auto</option><option>yaml</option><option>json</option></select></label>
+    </div>
+    <textarea id="text" spellcheck="false" placeholder="Paste a YAML or JSON model here, pick an example, or upload a file."></textarea>
+    <div class="row">
+      <button id="btn-validate">Validate</button>
+      <label>Seed <input type="number" id="seed" placeholder="model default"></label>
+      <label>Iterations <input type="number" id="iterations" min="1" placeholder="model default"></label>
+      <button id="btn-run" class="primary">Run</button>
+    </div>
+    <div id="status"></div>
+    <div id="diagnostics"></div>
+  </section>
+  <section class="panel" id="diagram-panel">
+    <h2>2. Network</h2>
+    <div id="diagram"><p class="muted">Validate or run a model to draw its task network.</p></div>
+  </section>
+  <section class="panel" id="results">
+    <h2>3. Results</h2>
+    <div id="summary" class="muted">No run yet.</div>
+    <div class="row" id="downloads" hidden>
+      Download CSV:
+      <button data-table="task_summary">task summary</button>
+      <button data-table="resources">resources</button>
+      <button data-table="iterations">iterations</button>
+      <button data-table="observations">observations</button>
+      <button data-table="task_counts">task counts</button>
+    </div>
+    <h3>Task statistics</h3><div id="tasks"></div>
+    <h3>Resource utilization</h3><div id="resources"></div>
+    <h3>Iterations</h3><div id="iters"></div>
+  </section>
+</main>
+<script src="/static/app.js"></script>
+</body>
+</html>
