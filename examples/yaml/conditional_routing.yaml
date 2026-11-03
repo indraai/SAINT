@@ -1,0 +1,36 @@
+# Conditional take-first routing on an attribute, with a priority-ranked queue.
+# Each job gets a random "size" (IA 1). Big jobs (size > 5) go to the SENIOR
+# operator, everything else to JUNIOR. Run ends after 200 finished jobs.
+saint: "1.0"
+general: {name: CONDITIONAL_ROUTING, iterations: 20, sinks_to_complete: 200, seed: 2026}
+options: {ranking: FIFO}
+distributions:
+  1: {type: EX, mean: 3.0}              # time between arrivals
+  2: {type: UN, min: 0.0, max: 10.0}    # job size
+  3: {type: TR, mode: 2.0, min: 1.0, max: 4.0}
+  4: {type: NO, mean: 4.0, sd: 1.0, min: 1.0}
+resources:
+  1: {label: JUNIOR}
+  2: {label: SENIOR}
+tasks:
+  1:
+    label: ARRIVE
+    role: source
+    pr2: 1
+    time: {DS: 1}
+    assignments: [{at: COM, target: IA, index: 1, value: {DS: 2}}]
+    branching: {type: DET, successors: [1, 2]}
+  2:
+    label: ROUTE
+    pr2: 1
+    time: 0
+    branching:
+      type: CFI
+      branches:
+        - {to: 4, condition: {code: AGV, attr: 1, value: 5.0}}   # IA1 > 5
+        - {to: 3, condition: {code: NO}}                         # otherwise (always true)
+  3: {label: EASY_JOB, pr2: 1, time: {DS: 3}, resources: {ids: [1]},
+      branching: {successors: [5]}}
+  4: {label: HARD_JOB, pr2: 1, time: {DS: 4}, resources: {ids: [2]},
+      branching: {successors: [5]}}
+  5: {label: FINISHED, role: sink, pr2: 1, time: 0, stat: {type: BET, at: COM}}

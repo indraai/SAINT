@@ -1,4 +1,3 @@
-"""Phase 2: web graph editor and visualizer.
-
-Spec: docs/SAINT_modern_build_spec.md §11. Not yet implemented.
+"""Web front end. Step 2 ships the API and a simple UI in ``pysaint.api``
+(``saint serve``); the graph *editor* (spec §11) is still a later phase.
 """
